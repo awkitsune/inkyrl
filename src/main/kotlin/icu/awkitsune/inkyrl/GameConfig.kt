@@ -12,11 +12,11 @@ object GameConfig {
     val TILESET = CP437TilesetResources.yayo16x16()
     val THEME = ColorThemes.solarizedDarkCyan()
 
-    const val SIDEBAR_WIDTH = 20
+    const val SIDEBAR_WIDTH = 16
     const val LOG_HEIGHT = 8
 
-    const val WINDOW_WIDTH = 80
-    const val WINDOW_HEIGHT = 50
+    const val WINDOW_WIDTH = 60
+    const val WINDOW_HEIGHT = 40
 
     val WORLD_SIZE = Size3D.create(
         xLength = WINDOW_WIDTH,
