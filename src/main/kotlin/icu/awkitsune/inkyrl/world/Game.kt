@@ -1,19 +1,19 @@
 package icu.awkitsune.inkyrl.world
 
-import icu.awkitsune.inkyrl.GameConfig.GAME_AREA_SIZE
-import icu.awkitsune.inkyrl.GameConfig.WORLD_SIZE
-import icu.awkitsune.inkyrl.builders.WorldBuilder
-import org.hexworks.zircon.api.data.Size3D
+import icu.awkitsune.inkyrl.attributes.types.Player
+import icu.awkitsune.inkyrl.extensions.GameEntity
 
-class Game(val world: World) {
+class Game(
+    val world: World,
+    val player: GameEntity<Player>
+) {
     companion object {
         fun create(
-            worldSize: Size3D = WORLD_SIZE,
-            visibleSize: Size3D = GAME_AREA_SIZE
+            player: GameEntity<Player>,
+            world: World
         ) = Game (
-            WorldBuilder(worldSize)
-                .makeCaves()
-                .build(visibleSize)
+            world = world,
+            player = player
         )
     }
 }

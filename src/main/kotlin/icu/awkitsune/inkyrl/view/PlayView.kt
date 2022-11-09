@@ -1,6 +1,7 @@
 package icu.awkitsune.inkyrl.view
 
 import icu.awkitsune.inkyrl.GameConfig
+import icu.awkitsune.inkyrl.builders.GameBuilder
 import icu.awkitsune.inkyrl.builders.GameTileRepository
 import icu.awkitsune.inkyrl.world.Game
 import org.hexworks.cobalt.databinding.api.extension.toProperty
@@ -10,12 +11,14 @@ import org.hexworks.zircon.api.component.ColorTheme
 import org.hexworks.zircon.api.component.ComponentAlignment
 import org.hexworks.zircon.api.game.ProjectionMode
 import org.hexworks.zircon.api.grid.TileGrid
+import org.hexworks.zircon.api.uievent.KeyboardEventType
+import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.api.view.base.BaseView
 import org.hexworks.zircon.internal.game.impl.GameAreaComponentRenderer
 
 class PlayView(
     private val grid: TileGrid,
-    private val game: Game = Game.create(),
+    private val game: Game = GameBuilder.create(),
     theme: ColorTheme = GameConfig.THEME
 ) : BaseView(grid, theme){
 
@@ -51,6 +54,11 @@ class PlayView(
             .build()
 
         screen.addComponents(sidebar, logArea, gameComponent)
+
+        screen.handleKeyboardEvents(KeyboardEventType.KEY_PRESSED) { event, _ ->
+            game.world.update(screen, event, game)
+            Processed
+        }
     }
 
 }

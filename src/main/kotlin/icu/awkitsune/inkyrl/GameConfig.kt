@@ -19,8 +19,8 @@ object GameConfig {
     const val WINDOW_HEIGHT = 40
 
     val WORLD_SIZE = Size3D.create(
-        xLength = WINDOW_WIDTH,
-        yLength = WINDOW_HEIGHT,
+        xLength = WINDOW_WIDTH * 2,
+        yLength = WINDOW_HEIGHT * 2,
         zLength = DUNGEON_LEVELS
     )
     val GAME_AREA_SIZE = Size3D.create(

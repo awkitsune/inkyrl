@@ -5,6 +5,7 @@ val slf4j_version: String by project
 val junit_version: String by project
 val mockito_version: String by project
 val assertj_version: String by project
+val amethyst_version: String by project
 
 plugins {
     kotlin("jvm") version "1.4.10"
@@ -24,6 +25,8 @@ java {
 }
 
 dependencies {
+    implementation("org.hexworks.amethyst:amethyst.core-jvm:$amethyst_version")
+
     implementation("org.slf4j:slf4j-api:$slf4j_version")
     implementation("org.slf4j:slf4j-simple:$slf4j_version")
 
