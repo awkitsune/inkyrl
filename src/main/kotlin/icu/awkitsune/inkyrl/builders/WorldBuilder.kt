@@ -15,7 +15,7 @@ class WorldBuilder(private val worldSize: Size3D) {
     
     fun makeCaves(): WorldBuilder {
         return randomizeTiles()
-            .smooth(8)
+            .smooth(6)
             .connectLevels()
     }
 
@@ -51,7 +51,7 @@ class WorldBuilder(private val worldSize: Size3D) {
 
     private fun randomizeTiles(): WorldBuilder {
         forAllPositions { pos ->
-            blocks[pos] = if (Math.random() < 0.5) {
+            blocks[pos] = if (Math.random() < 0.5002) {
                 GameBlockFactory.floor()
             } else GameBlockFactory.wall()
         }
