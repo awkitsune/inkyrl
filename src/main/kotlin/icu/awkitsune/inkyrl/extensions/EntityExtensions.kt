@@ -4,6 +4,9 @@ import icu.awkitsune.inkyrl.attributes.EntityActions
 import icu.awkitsune.inkyrl.attributes.EntityPosition
 import icu.awkitsune.inkyrl.attributes.EntityTile
 import icu.awkitsune.inkyrl.attributes.flags.BlockOccupier
+import icu.awkitsune.inkyrl.attributes.types.Combatant
+import icu.awkitsune.inkyrl.attributes.types.Player
+import icu.awkitsune.inkyrl.attributes.types.combatStats
 import icu.awkitsune.inkyrl.world.GameContext
 import org.hexworks.amethyst.api.Attribute
 import org.hexworks.amethyst.api.Consumed
@@ -44,3 +47,8 @@ suspend fun AnyGameEntity.tryActionsOn(context: GameContext, target: AnyGameEnti
 
     return result
 }
+
+val AnyGameEntity.isPlayer: Boolean
+    get() = this.type == Player
+
+fun GameEntity<Combatant>.hasNoHealthLeft(): Boolean = combatStats.hp <=0

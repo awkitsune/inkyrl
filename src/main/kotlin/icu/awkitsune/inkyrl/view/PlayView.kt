@@ -3,8 +3,10 @@ package icu.awkitsune.inkyrl.view
 import icu.awkitsune.inkyrl.GameConfig
 import icu.awkitsune.inkyrl.builders.GameBuilder
 import icu.awkitsune.inkyrl.builders.GameTileRepository
+import icu.awkitsune.inkyrl.events.GameLogEvent
 import icu.awkitsune.inkyrl.world.Game
 import org.hexworks.cobalt.databinding.api.extension.toProperty
+import org.hexworks.cobalt.events.api.KeepSubscription
 import org.hexworks.zircon.api.ComponentDecorations.box
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.ColorTheme
@@ -14,7 +16,9 @@ import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.uievent.KeyboardEventType
 import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.api.view.base.BaseView
+import org.hexworks.zircon.internal.Zircon
 import org.hexworks.zircon.internal.game.impl.GameAreaComponentRenderer
+import org.hexworks.cobalt.events.api.subscribeTo
 
 class PlayView(
     private val grid: TileGrid,
@@ -58,6 +62,15 @@ class PlayView(
         screen.handleKeyboardEvents(KeyboardEventType.KEY_PRESSED) { event, _ ->
             game.world.update(screen, event, game)
             Processed
+        }
+
+        Zircon.eventBus.subscribeTo<GameLogEvent> { (text) ->
+            logArea.addParagraph(
+                paragraph = text,
+                withNewLine = false,
+                withTypingEffectSpeedInMs = 20
+            )
+            KeepSubscription
         }
     }
 
