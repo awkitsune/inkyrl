@@ -3,6 +3,7 @@ package icu.awkitsune.inkyrl.extensions
 import icu.awkitsune.inkyrl.attributes.EntityActions
 import icu.awkitsune.inkyrl.attributes.EntityPosition
 import icu.awkitsune.inkyrl.attributes.EntityTile
+import icu.awkitsune.inkyrl.attributes.VisionBlocker
 import icu.awkitsune.inkyrl.attributes.flags.BlockOccupier
 import icu.awkitsune.inkyrl.attributes.types.Combatant
 import icu.awkitsune.inkyrl.attributes.types.Player
@@ -52,3 +53,5 @@ val AnyGameEntity.isPlayer: Boolean
     get() = this.type == Player
 
 fun GameEntity<Combatant>.hasNoHealthLeft(): Boolean = combatStats.hp <=0
+val AnyGameEntity.blocksVision: Boolean
+    get() = this.findAttribute(VisionBlocker::class).isPresent

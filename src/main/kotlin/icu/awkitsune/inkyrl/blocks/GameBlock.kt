@@ -1,5 +1,6 @@
 package icu.awkitsune.inkyrl.blocks
 
+import icu.awkitsune.inkyrl.builders.GameTileRepository
 import icu.awkitsune.inkyrl.builders.GameTileRepository.EMPTY
 import icu.awkitsune.inkyrl.builders.GameTileRepository.FLOOR
 import icu.awkitsune.inkyrl.builders.GameTileRepository.PLAYER
@@ -22,6 +23,7 @@ class GameBlock(
     tiles = persistentMapOf(BlockTileType.CONTENT to defaultTile)
 ){
     init {
+        top = GameTileRepository.UNREVEALED
         updateContent()
     }
     companion object {

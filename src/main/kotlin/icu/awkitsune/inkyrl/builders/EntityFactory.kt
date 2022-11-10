@@ -2,9 +2,7 @@ package icu.awkitsune.inkyrl.builders
 
 import icu.awkitsune.inkyrl.attributes.*
 import icu.awkitsune.inkyrl.attributes.flags.BlockOccupier
-import icu.awkitsune.inkyrl.attributes.types.Fungus
-import icu.awkitsune.inkyrl.attributes.types.Player
-import icu.awkitsune.inkyrl.attributes.types.Wall
+import icu.awkitsune.inkyrl.attributes.types.*
 import icu.awkitsune.inkyrl.builders.GameTileRepository.FUNGUS
 import icu.awkitsune.inkyrl.builders.GameTileRepository.PLAYER
 import icu.awkitsune.inkyrl.builders.GameTileRepository.WALL
@@ -43,7 +41,8 @@ object EntityFactory {
         attributes(
             EntityPosition(),
             BlockOccupier,
-            EntityTile(WALL)
+            EntityTile(WALL),
+            VisionBlocker
         )
         facets(Diggable)
         behaviors()
@@ -58,9 +57,28 @@ object EntityFactory {
                 maxHp = 100,
                 attackValue = 10,
                 defenseValue = 5
-            )
+            ),
+            Vision(8)
         )
         behaviors(InputReceiver)
-        facets(Movable, CameraMover)
+        facets(Movable, CameraMover, StairClimber, StairDescender)
+    }
+
+    fun newStairsDown() = newGameEntityOfType(StairsDown) {
+        attributes(
+            EntityTile(GameTileRepository.STAIRS_DOWN),
+            EntityPosition()
+        )
+    }
+
+    fun newStairsUp() = newGameEntityOfType(StairsUp) {
+        attributes(
+            EntityTile(GameTileRepository.STAIRS_UP),
+            EntityPosition()
+        )
+    }
+
+    fun newFogOfWar() = newGameEntityOfType(FOW) {
+        behaviors(FogOfWar)
     }
 }

@@ -35,4 +35,21 @@ object GameTileRepository {
         .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
         .withForegroundColor(GameColors.FUNGUS_COLOR)
         .buildCharacterTile()
+
+    val STAIRS_UP = Tile.newBuilder()
+        .withCharacter('<')
+        .withBackgroundColor(FLOOR_BACKGROUND)
+        .withForegroundColor(ACCENT_COLOR)
+        .buildCharacterTile()
+
+    val STAIRS_DOWN = Tile.newBuilder()
+        .withCharacter('>')
+        .withBackgroundColor(FLOOR_BACKGROUND)
+        .withForegroundColor(ACCENT_COLOR)
+        .buildCharacterTile()
+
+    val UNREVEALED = Tile.newBuilder()
+        .withCharacter(' ')
+        .withBackgroundColor(GameColors.UNREVEALED_COLOR)
+        .buildCharacterTile()
 }

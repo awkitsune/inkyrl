@@ -1,7 +1,9 @@
 package icu.awkitsune.inkyrl.world
 
+import icu.awkitsune.inkyrl.attributes.Vision
 import icu.awkitsune.inkyrl.blocks.GameBlock
 import icu.awkitsune.inkyrl.extensions.GameEntity
+import icu.awkitsune.inkyrl.extensions.blocksVision
 import icu.awkitsune.inkyrl.extensions.position
 import org.hexworks.amethyst.api.Engine
 import org.hexworks.amethyst.api.entity.Entity
@@ -9,11 +11,14 @@ import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.amethyst.internal.TurnBasedEngine
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.zircon.api.builder.game.GameAreaBuilder
+import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Position3D
 import org.hexworks.zircon.api.data.Size3D
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.game.GameArea
 import org.hexworks.zircon.api.screen.Screen
+import org.hexworks.zircon.api.shape.EllipseFactory
+import org.hexworks.zircon.api.shape.LineFactory
 import org.hexworks.zircon.api.uievent.UIEvent
 
 class World(
@@ -113,5 +118,37 @@ class World(
         }
         engine.removeEntity(entity)
         entity.position = Position3D.unknown()
+    }
+
+    fun addWorldEntity(entity: Entity<EntityType, GameContext>) {
+        engine.addEntity(entity)
+    }
+
+    fun isVisionBlockedAt(pos: Position3D): Boolean {
+        return fetchBlockAt(pos).fold(whenEmpty = { false }, whenPresent = {
+            it.entities.any(GameEntity<EntityType>::blocksVision)
+        })
+    }
+
+    fun findVisiblePositionsFor(entity: GameEntity<EntityType>): Iterable<Position> {
+        val centerPos = entity.position.to2DPosition()
+        return entity.findAttribute(Vision::class).map { (radius) ->
+            EllipseFactory.buildEllipse(
+                fromPosition = centerPos,
+                toPosition = centerPos.withRelativeX(radius).withRelativeY(radius)
+            )
+                .positions
+                .flatMap { ringPos ->
+                    val result = mutableListOf<Position>()
+                    val iterator = LineFactory.buildLine(centerPos, ringPos).iterator()
+                    do {
+                        val next = iterator.next()
+                        result.add(next)
+                    } while (iterator.hasNext() &&
+                        isVisionBlockedAt(Position3D.from2DPosition(next, entity.position.z)).not()
+                    )
+                    result
+                }
+        }.orElse(listOf())
     }
 }

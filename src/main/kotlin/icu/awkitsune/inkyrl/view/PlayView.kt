@@ -19,6 +19,8 @@ import org.hexworks.zircon.api.view.base.BaseView
 import org.hexworks.zircon.internal.Zircon
 import org.hexworks.zircon.internal.game.impl.GameAreaComponentRenderer
 import org.hexworks.cobalt.events.api.subscribeTo
+import org.hexworks.zircon.api.uievent.KeyCode
+import org.hexworks.zircon.api.uievent.KeyboardEvent
 
 class PlayView(
     private val grid: TileGrid,
@@ -68,10 +70,18 @@ class PlayView(
             logArea.addParagraph(
                 paragraph = text,
                 withNewLine = false,
-                withTypingEffectSpeedInMs = 20
+                withTypingEffectSpeedInMs = 10
             )
             KeepSubscription
         }
+
+        game.world.update(
+            screen, KeyboardEvent(
+                type = KeyboardEventType.KEY_TYPED,
+                key = "",
+                code = KeyCode.DEAD_GRAVE
+            ), game
+        )
     }
 
 }
