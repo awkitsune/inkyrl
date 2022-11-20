@@ -15,7 +15,7 @@ data class SardiniumCounter(
     var sardiniumCount: Int by sardiniumCountProperty.asDelegate()
 
     override fun toComponent(width: Int): Component {
-        val sardiniumProp = createPropertyFrom("Zircons: ")
+        val sardiniumProp = createPropertyFrom("Sardinium: ")
                 .bindPlusWith(sardiniumCountProperty.toStringProperty())
         return Components.header()
                 .withText(sardiniumProp.value)

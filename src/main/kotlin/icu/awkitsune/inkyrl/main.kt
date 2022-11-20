@@ -2,8 +2,15 @@ package icu.awkitsune.inkyrl
 
 import icu.awkitsune.inkyrl.view.StartView
 import org.hexworks.zircon.api.SwingApplications
+import org.hexworks.zircon.api.application.Application
+import javax.swing.JFrame
 
-fun main(args: Array<String>) {
-    val grid = SwingApplications.startTileGrid(GameConfig.buildAppConfig())
-    StartView(grid).dock()
+class Main {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val grid = SwingApplications.startTileGrid(GameConfig.buildAppConfig())
+            StartView(grid).dock()
+        }
+    }
 }

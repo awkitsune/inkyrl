@@ -4,6 +4,8 @@ import org.hexworks.zircon.api.CP437TilesetResources
 import org.hexworks.zircon.api.ColorThemes
 import org.hexworks.zircon.api.application.AppConfig
 import org.hexworks.zircon.api.data.Size3D
+import java.io.InputStream
+
 
 object GameConfig {
 
@@ -36,8 +38,8 @@ object GameConfig {
     const val OCTOLINGS_PER_LEVEL = 5
 
     fun buildAppConfig() = AppConfig.newBuilder()
-            .withDefaultTileset(TILESET)
-            .withSize(WINDOW_WIDTH, WINDOW_HEIGHT)
-            .build()
-
+        .withDefaultTileset(TILESET)
+        .withTitle("InkyRL")//TODO: Freaking icon
+        .withSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+        .build()
 }

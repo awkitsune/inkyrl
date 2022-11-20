@@ -69,72 +69,72 @@ import org.hexworks.zircon.api.data.Tile
 import kotlin.random.Random
 
 fun <T : EntityType> newGameEntityOfType(
-        type: T,
-        init: EntityBuilder<T, GameContext>.() -> Unit
+    type: T,
+    init: EntityBuilder<T, GameContext>.() -> Unit
 ) = newEntityOfType(type, init)
 
 object EntityFactory {
 
     fun newPlayer() = newGameEntityOfType(Player) {
         attributes(
-                Vision(9),
-                EntityPosition(),
-                BlockOccupier,
-                CombatStats.create(
-                        maxHp = 100,
-                        attackValue = 10,
-                        defenseValue = 5
-                ),
-                EntityTile(GameTileRepository.PLAYER),
-                EntityActions(Dig::class, Attack::class),
-                Inventory(10),
-                EnergyLevel(1000, 1000),
-                Equipment(
-                        initialWeapon = newClub(),
-                        initialArmor = newJacket()
-                ),
-                Experience(),
-                SardiniumCounter()
+            Vision(9),
+            EntityPosition(),
+            BlockOccupier,
+            CombatStats.create(
+                maxHp = 100,
+                attackValue = 10,
+                defenseValue = 5
+            ),
+            EntityTile(GameTileRepository.PLAYER),
+            EntityActions(Dig::class, Attack::class),
+            Inventory(10),
+            EnergyLevel(1000, 1000),
+            Equipment(
+                initialWeapon = newClub(),
+                initialArmor = newJacket()
+            ),
+            Experience(),
+            SardiniumCounter()
         )
         behaviors(InputReceiver, EnergyExpender)
         facets(
-                Movable,
-                CameraMover,
-                StairClimber,
-                StairDescender,
-                Attackable,
-                Destructible,
-                SardiniumGatherer,
-                ItemPicker,
-                InventoryInspector,
-                ItemDropper,
-                EnergyExpender,
-                DigestiveSystem,
-                ExperienceAccumulator
+            Movable,
+            CameraMover,
+            StairClimber,
+            StairDescender,
+            Attackable,
+            Destructible,
+            SardiniumGatherer,
+            ItemPicker,
+            InventoryInspector,
+            ItemDropper,
+            EnergyExpender,
+            DigestiveSystem,
+            ExperienceAccumulator
         )
     }
 
     fun newWall() = newGameEntityOfType(Wall) {
         attributes(
-                EntityPosition(),
-                BlockOccupier,
-                EntityTile(GameTileRepository.WALL),
-                VisionBlocker
+            EntityPosition(),
+            BlockOccupier,
+            EntityTile(GameTileRepository.WALL),
+            VisionBlocker
         )
         facets(Diggable)
     }
 
     fun newFungus(fungusSpread: FungusSpread = FungusSpread()) = newGameEntityOfType(Fungus) {
         attributes(
-                BlockOccupier,
-                EntityPosition(),
-                EntityTile(GameTileRepository.FUNGUS),
-                fungusSpread,
-                CombatStats.create(
-                        maxHp = 10,
-                        attackValue = 0,
-                        defenseValue = 0
-                )
+            BlockOccupier,
+            EntityPosition(),
+            EntityTile(GameTileRepository.FUNGUS),
+            fungusSpread,
+            CombatStats.create(
+                maxHp = 10,
+                attackValue = 0,
+                defenseValue = 0
+            )
         )
         facets(Attackable, Destructible)
         behaviors(FungusGrowth)
@@ -142,15 +142,15 @@ object EntityFactory {
 
     fun newStairsDown() = newGameEntityOfType(StairsDown) {
         attributes(
-                EntityTile(GameTileRepository.STAIRS_DOWN),
-                EntityPosition()
+            EntityTile(GameTileRepository.STAIRS_DOWN),
+            EntityPosition()
         )
     }
 
     fun newStairsUp() = newGameEntityOfType(StairsUp) {
         attributes(
-                EntityTile(GameTileRepository.STAIRS_UP),
-                EntityPosition()
+            EntityTile(GameTileRepository.STAIRS_UP),
+            EntityPosition()
         )
     }
 
@@ -160,18 +160,18 @@ object EntityFactory {
 
     fun newOctarian() = newGameEntityOfType(Octarian) {
         attributes(
-                BlockOccupier,
-                EntityPosition(),
-                EntityTile(GameTileRepository.OCTARIAN),
-                CombatStats.create(
-                        maxHp = 5,
-                        attackValue = 2,
-                        defenseValue = 1
-                ),
-                EntityActions(Attack::class),
-                Inventory(1).apply {
-                    addItem(newOctoFood())   // 1
-                }
+            BlockOccupier,
+            EntityPosition(),
+            EntityTile(GameTileRepository.OCTARIAN),
+            CombatStats.create(
+                maxHp = 5,
+                attackValue = 2,
+                defenseValue = 1
+            ),
+            EntityActions(Attack::class),
+            Inventory(1).apply {
+                addItem(newBatMeat())   // 1
+            }
         )
         facets(Movable, Attackable, ItemDropper, LootDropper, Destructible)
         behaviors(Wanderer)
@@ -179,137 +179,159 @@ object EntityFactory {
 
     fun newSardinium() = newGameEntityOfType(Sardinium) {
         attributes(
-                ItemIcon(
-                        Tile.newBuilder()
-                                .withName("white gem")
-                                .withTileset(GraphicalTilesetResources.nethack16x16())
-                                .buildGraphicalTile()
-                ),
-                EntityPosition(),
-                EntityTile(GameTileRepository.SARDINIUM)
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("white gem")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            EntityPosition(),
+            EntityTile(GameTileRepository.SARDINIUM)
         )
     }
 
-    fun newOctoFood() = newGameEntityOfType(OctoFood) {
+    fun newBatMeat() = newGameEntityOfType(OctoFood) {
         attributes(
-                ItemIcon(
-                        Tile.newBuilder()
-                                .withName("Meatball")           // 1
-                                .withTileset(GraphicalTilesetResources.nethack16x16())
-                                .buildGraphicalTile()
-                ),
-                NutritionalValue(750),              // 2
-                EntityPosition(),
-                EntityTile(GameTileRepository.OCTO_FOOD)
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("Meatball")           // 1
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            NutritionalValue(750),              // 2
+            EntityPosition(),
+            EntityTile(GameTileRepository.OCTO_FOOD)
         )
     }
 
     fun newDagger() = newGameEntityOfType(Dagger) {
         attributes(
-            ItemIcon(Tile.newBuilder()
-                .withName("Dagger")
-                .withTileset(GraphicalTilesetResources.nethack16x16())
-                .buildGraphicalTile()),
-                EntityPosition(),
-                ItemCombatStats(
-                        attackValue = 4,
-                        combatItemType = "Weapon"),
-                EntityTile(GameTileRepository.DAGGER)
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("Dagger")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            EntityPosition(),
+            ItemCombatStats(
+                attackValue = 4,
+                combatItemType = "Weapon"
+            ),
+            EntityTile(GameTileRepository.DAGGER)
         )
     }
 
     fun newSword() = newGameEntityOfType(Sword) {
         attributes(
-            ItemIcon(Tile.newBuilder()
-                .withName("Short sword")
-                .withTileset(GraphicalTilesetResources.nethack16x16())
-                .buildGraphicalTile()),
-                EntityPosition(),
-                ItemCombatStats(
-                        attackValue = 6,
-                        combatItemType = "Weapon"),
-                EntityTile(GameTileRepository.SWORD)
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("Short sword")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            EntityPosition(),
+            ItemCombatStats(
+                attackValue = 6,
+                combatItemType = "Weapon"
+            ),
+            EntityTile(GameTileRepository.SWORD)
         )
     }
 
     fun newStaff() = newGameEntityOfType(Staff) {
         attributes(
-            ItemIcon(Tile.newBuilder()
-                .withName("staff")
-                .withTileset(GraphicalTilesetResources.nethack16x16())
-                .buildGraphicalTile()),
-                EntityPosition(),
-                ItemCombatStats(
-                        attackValue = 4,
-                        defenseValue = 2,
-                        combatItemType = "Weapon"),
-                EntityTile(GameTileRepository.STAFF)
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("staff")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            EntityPosition(),
+            ItemCombatStats(
+                attackValue = 4,
+                defenseValue = 2,
+                combatItemType = "Weapon"
+            ),
+            EntityTile(GameTileRepository.STAFF)
         )
     }
 
     fun newLightArmor() = newGameEntityOfType(LightArmor) {
         attributes(
-            ItemIcon(Tile.newBuilder()
-                .withName("Leather armor")
-                .withTileset(GraphicalTilesetResources.nethack16x16())
-                .buildGraphicalTile()),
-                EntityPosition(),
-                ItemCombatStats(
-                        defenseValue = 2,
-                        combatItemType = "Armor"),
-                EntityTile(GameTileRepository.LIGHT_ARMOR)
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("Leather armor")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            EntityPosition(),
+            ItemCombatStats(
+                defenseValue = 2,
+                combatItemType = "Armor"
+            ),
+            EntityTile(GameTileRepository.LIGHT_ARMOR)
         )
     }
 
     fun newMediumArmor() = newGameEntityOfType(MediumArmor) {
         attributes(
-            ItemIcon(Tile.newBuilder()
-                .withName("Chain mail")
-                .withTileset(GraphicalTilesetResources.nethack16x16())
-                .buildGraphicalTile()),
-                EntityPosition(),
-                ItemCombatStats(
-                        defenseValue = 3,
-                        combatItemType = "Armor"),
-                EntityTile(GameTileRepository.MEDIUM_ARMOR)
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("Chain mail")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            EntityPosition(),
+            ItemCombatStats(
+                defenseValue = 3,
+                combatItemType = "Armor"
+            ),
+            EntityTile(GameTileRepository.MEDIUM_ARMOR)
         )
     }
 
     fun newHeavyArmor() = newGameEntityOfType(HeavyArmor) {
         attributes(
-            ItemIcon(Tile.newBuilder()
-                .withName("Plate mail")
-                .withTileset(GraphicalTilesetResources.nethack16x16())
-                .buildGraphicalTile()),
-                EntityPosition(),
-                ItemCombatStats(
-                        defenseValue = 4,
-                        combatItemType = "Armor"),
-                EntityTile(GameTileRepository.HEAVY_ARMOR)
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("Plate mail")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            EntityPosition(),
+            ItemCombatStats(
+                defenseValue = 4,
+                combatItemType = "Armor"
+            ),
+            EntityTile(GameTileRepository.HEAVY_ARMOR)
         )
     }
 
     fun newClub() = newGameEntityOfType(Club) {
         attributes(
             ItemCombatStats(combatItemType = "Weapon"),
-                EntityTile(GameTileRepository.CLUB),
-                EntityPosition(),
-                ItemIcon(Tile.newBuilder()
-                        .withName("Club")
-                        .withTileset(GraphicalTilesetResources.nethack16x16())
-                        .buildGraphicalTile())
+            EntityTile(GameTileRepository.CLUB),
+            EntityPosition(),
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("Club")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            )
         )
     }
 
     fun newJacket() = newGameEntityOfType(Jacket) {
         attributes(
             ItemCombatStats(combatItemType = "Armor"),
-                EntityTile(GameTileRepository.JACKET),
-                EntityPosition(),
-                ItemIcon(Tile.newBuilder()
-                        .withName("Leather jacket")
-                        .withTileset(GraphicalTilesetResources.nethack16x16())
-                        .buildGraphicalTile())
+            EntityTile(GameTileRepository.JACKET),
+            EntityPosition(),
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("Leather jacket")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            )
         )
     }
 
@@ -328,18 +350,19 @@ object EntityFactory {
     fun newOctoling() = newGameEntityOfType(Octoling) {
         attributes(
             BlockOccupier,
-                EntityPosition(),
-                EntityTile(GameTileRepository.OCTOLING),
-                Vision(10),
-                CombatStats.create(
-                        maxHp = 25,
-                        attackValue = 8,
-                        defenseValue = 4),
-                Inventory(2).apply {
-                    addItem(newRandomWeapon())
-                    addItem(newRandomArmor())
-                },
-                EntityActions(Attack::class)
+            EntityPosition(),
+            EntityTile(GameTileRepository.OCTOLING),
+            Vision(10),
+            CombatStats.create(
+                maxHp = 25,
+                attackValue = 8,
+                defenseValue = 4
+            ),
+            Inventory(2).apply {
+                addItem(newRandomWeapon())
+                addItem(newRandomArmor())
+            },
+            EntityActions(Attack::class)
         )
         facets(Movable, Attackable, ItemDropper, LootDropper, Destructible)
         behaviors(HunterSeeker or Wanderer)
@@ -348,7 +371,7 @@ object EntityFactory {
     fun newExit() = newGameEntityOfType(Exit) {
         attributes(
             EntityTile(GameTileRepository.EXIT),
-                EntityPosition()
+            EntityPosition()
         )
     }
 }

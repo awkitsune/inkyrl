@@ -15,7 +15,7 @@ class PlayerStatsFragment(
         .withSize(width, 30)                                                // 1
         .withSpacing(1)                                                    // 2
         .build().apply {
-            addComponent(Components.header().withText("Player"))                // 3
+            addComponent(Components.header().withText("Inkling"))                // 3
             player.attributes.toList().filterIsInstance<DisplayableAttribute>()     // 4
                 .forEach {
                     addComponent(it.toComponent(width))                             // 5
