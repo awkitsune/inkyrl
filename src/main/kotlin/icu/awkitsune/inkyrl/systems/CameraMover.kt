@@ -12,12 +12,11 @@ object CameraMover : BaseFacet<GameContext, MoveCamera>(MoveCamera::class) {
     override suspend fun receive(message: MoveCamera): Response {
         val (context, source, previousPosition) = message
         val world = context.world
-        val screenPos = source.position - world.visibleOffset
-        val halfHeight = world.visibleSize.yLength / 2
+        val screenPos = source.position - world.visibleOffset       // 1
+        val halfHeight = world.visibleSize.yLength / 2                   // 2
         val halfWidth = world.visibleSize.xLength / 2
         val currentPosition = source.position
-
-        when {
+        when {                                                               // 3
             previousPosition.y > currentPosition.y && screenPos.y < halfHeight -> {
                 world.scrollOneBackward()
             }
@@ -30,9 +29,7 @@ object CameraMover : BaseFacet<GameContext, MoveCamera>(MoveCamera::class) {
             previousPosition.x < currentPosition.x && screenPos.x > halfWidth -> {
                 world.scrollOneRight()
             }
-
         }
-
         return Consumed
     }
 }

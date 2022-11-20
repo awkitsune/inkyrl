@@ -7,11 +7,13 @@ class Game(
     val world: World,
     val player: GameEntity<Player>
 ) {
+
     companion object {
+
         fun create(
             player: GameEntity<Player>,
             world: World
-        ) = Game (
+        ) = Game(
             world = world,
             player = player
         )

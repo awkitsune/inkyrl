@@ -7,36 +7,37 @@ import org.hexworks.zircon.api.data.Size3D
 
 object GameConfig {
 
-    const val DUNGEON_LEVELS = 2
+    // game
+    const val DUNGEON_LEVELS = 10
 
+    // look & feel
     val TILESET = CP437TilesetResources.yayo16x16()
     val THEME = ColorThemes.solarizedDarkCyan()
+    const val SIDEBAR_WIDTH = 18
+    const val LOG_AREA_HEIGHT = 6
 
-    const val SIDEBAR_WIDTH = 16
-    const val LOG_HEIGHT = 8
-
-    const val WINDOW_WIDTH = 60
+    // sizing
+    const val WINDOW_WIDTH = 70
     const val WINDOW_HEIGHT = 40
 
-    const val FUNGI_PER_LEVEL = 20
-    const val MAX_FUNGI_SPREAD = 30
+    // entities
+    const val FUNGI_PER_LEVEL = 15
+    const val MAXIMUM_FUNGUS_SPREAD = 30
+    const val OCTARIANS_PER_LEVEL = 15
+    const val SARDINIUM_PER_LEVEL = 20
 
-    val WORLD_SIZE = Size3D.create(
-        xLength = WINDOW_WIDTH * 2,
-        yLength = WINDOW_HEIGHT * 2,
-        zLength = DUNGEON_LEVELS
+    val WORLD_SIZE = Size3D.create(WINDOW_WIDTH * 2, WINDOW_HEIGHT * 2, DUNGEON_LEVELS)
+    val GAME_COMPONENT_SIZE = Size3D.create(
+            xLength = WINDOW_WIDTH - SIDEBAR_WIDTH,
+            yLength = WINDOW_HEIGHT - LOG_AREA_HEIGHT,
+            zLength = 1
     )
-    val GAME_AREA_SIZE = Size3D.create(
-        xLength = WINDOW_WIDTH - SIDEBAR_WIDTH,
-        yLength = WINDOW_HEIGHT - LOG_HEIGHT,
-        zLength = DUNGEON_LEVELS
-    )
+
+    const val OCTOLINGS_PER_LEVEL = 5
 
     fun buildAppConfig() = AppConfig.newBuilder()
-        .withDefaultTileset(TILESET)
-        .withSize(
-            width = WINDOW_WIDTH,
-            height = WINDOW_HEIGHT
-        )
-        .build()
+            .withDefaultTileset(TILESET)
+            .withSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+            .build()
+
 }

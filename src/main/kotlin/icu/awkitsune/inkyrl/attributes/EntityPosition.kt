@@ -6,9 +6,9 @@ import org.hexworks.zircon.api.data.Position3D
 
 class EntityPosition(
     initialPosition: Position3D = Position3D.unknown()
-) : BaseAttribute() {
+) : BaseAttribute() { // 1
 
-    private val positionProperty = initialPosition.toProperty()
+    private val positionProperty = initialPosition.toProperty() // 2
 
-    var position: Position3D by positionProperty.asDelegate()
+    var position: Position3D by positionProperty.asDelegate() // 3
 }

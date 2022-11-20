@@ -1,9 +1,13 @@
 package icu.awkitsune.inkyrl.world
 
 import icu.awkitsune.inkyrl.attributes.Vision
+import icu.awkitsune.inkyrl.attributes.types.Item
 import icu.awkitsune.inkyrl.blocks.GameBlock
+import icu.awkitsune.inkyrl.extensions.AnyGameEntity
 import icu.awkitsune.inkyrl.extensions.GameEntity
+import icu.awkitsune.inkyrl.extensions.GameItem
 import icu.awkitsune.inkyrl.extensions.blocksVision
+import icu.awkitsune.inkyrl.extensions.filterType
 import icu.awkitsune.inkyrl.extensions.position
 import org.hexworks.amethyst.api.Engine
 import org.hexworks.amethyst.api.entity.Entity
@@ -20,20 +24,21 @@ import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.api.shape.EllipseFactory
 import org.hexworks.zircon.api.shape.LineFactory
 import org.hexworks.zircon.api.uievent.UIEvent
+import kotlin.math.abs
 
 class World(
     startingBlocks: Map<Position3D, GameBlock>,
     visibleSize: Size3D,
     actualSize: Size3D
 ) : GameArea<Tile, GameBlock> by GameAreaBuilder.newBuilder<Tile, GameBlock>()
-    .withVisibleSize(visibleSize)
-    .withActualSize(actualSize)
-    .build() {
+        .withVisibleSize(visibleSize)
+        .withActualSize(actualSize)
+        .build() {
 
     private val engine: TurnBasedEngine<GameContext> = Engine.create()
 
     init {
-        startingBlocks.forEach {(pos, block) ->
+        startingBlocks.forEach { (pos, block) ->
             setBlockAt(pos, block)
             block.entities.forEach { entity ->
                 engine.addEntity(entity)
@@ -42,7 +47,40 @@ class World(
         }
     }
 
-    fun addEntity(entity: Entity<EntityType, GameContext>, position: Position3D) {
+    fun update(screen: Screen, uiEvent: UIEvent, game: Game) { // 1
+        engine.executeTurn(
+                GameContext( // 2
+                        world = this,
+                        screen = screen, // 3
+                        uiEvent = uiEvent, // 4
+                        player = game.player
+                )
+        ) // 5
+    }
+
+    fun moveEntity(entity: GameEntity<EntityType>, position: Position3D): Boolean { // 1
+        var success = false                                                         // 2
+        val oldBlock = fetchBlockAt(entity.position)
+        val newBlock = fetchBlockAt(position)                       // 3
+
+        if (bothBlocksPresent(oldBlock, newBlock)) {                                // 4
+            success = true                                                          // 5
+            oldBlock.get().removeEntity(entity)
+            entity.position = position
+            newBlock.get().addEntity(entity)
+        }
+        return success                                                              // 6
+    }
+
+    /**
+     * Adds the given [Entity] at the given [Position3D].
+     * Has no effect if this world already contains the
+     * given [Entity].
+     */
+    fun addEntity(
+        entity: Entity<EntityType, GameContext>,
+        position: Position3D
+    ) {
         entity.position = position
         engine.addEntity(entity)
         fetchBlockAt(position).map {
@@ -51,30 +89,41 @@ class World(
     }
 
     fun addAtEmptyPosition(
-        entity: GameEntity<EntityType>,                         // 5
+        entity: AnyGameEntity,
         offset: Position3D = Position3D.create(0, 0, 0),
         size: Size3D = actualSize
-    ) : Boolean {
+    ): Boolean {
         return findEmptyLocationWithin(offset, size).fold(
-            whenEmpty = {
-                false
-            },
-            whenPresent = { location ->
-                addEntity(entity, location)
-                true
-            }
-        )
+                whenEmpty = {
+                    false
+                },
+                whenPresent = { location ->
+                    addEntity(entity, location)
+                    true
+                })
+
     }
 
+    fun removeEntity(entity: Entity<EntityType, GameContext>) {
+        fetchBlockAt(entity.position).map {
+            it.removeEntity(entity)
+        }
+        engine.removeEntity(entity)
+        entity.position = Position3D.unknown()
+    }
+
+    /**
+     * Finds an empty location within the given area (offset and size) on this [World].
+     */
     fun findEmptyLocationWithin(offset: Position3D, size: Size3D): Maybe<Position3D> {
         var position = Maybe.empty<Position3D>()
         val maxTries = 10
         var currentTry = 0
         while (position.isPresent.not() && currentTry < maxTries) {
             val pos = Position3D.create(
-                x = (Math.random() * size.xLength).toInt() + offset.x,
-                y = (Math.random() * size.yLength).toInt() + offset.y,
-                z = (Math.random() * size.zLength).toInt() + offset.z
+                    x = (Math.random() * size.xLength).toInt() + offset.x,
+                    y = (Math.random() * size.yLength).toInt() + offset.y,
+                    z = (Math.random() * size.zLength).toInt() + offset.z
             )
             fetchBlockAt(pos).map {
                 if (it.isEmptyFloor) {
@@ -86,69 +135,67 @@ class World(
         return position
     }
 
-    fun update(screen: Screen, uiEvent: UIEvent, game: Game) {
-        engine.executeTurn(GameContext(
-            world = this,
-            screen = screen,
-            uiEvent = uiEvent,
-            player = game.player
-        ))
+    fun isVisionBlockedAt(pos: Position3D): Boolean {
+        return fetchBlockAt(pos).fold(whenEmpty = { false }, whenPresent = {    // 1
+            it.entities.any(GameEntity<EntityType>::blocksVision)               // 2
+        })
     }
 
-    fun moveEntity(entity: GameEntity<EntityType>, position: Position3D): Boolean {
-        var success = false
-        val oldBlock = fetchBlockAt(entity.position)
-        val newBlock = fetchBlockAt(position)
-
-        if (bothBlocksPresent(oldBlock, newBlock)) {
-            success = true
-            oldBlock.get().removeEntity(entity)
-            entity.position = position
-            newBlock.get().addEntity(entity)
-        }
-        return success
-    }
-
-    private fun bothBlocksPresent(oldBlock: Maybe<GameBlock>, newBlock: Maybe<GameBlock>) =
-        oldBlock.isPresent && newBlock.isPresent
-
-    fun removeEntity(entity: Entity<EntityType, GameContext>) {
-        fetchBlockAt(entity.position).map {
-            it.removeEntity(entity)
-        }
-        engine.removeEntity(entity)
-        entity.position = Position3D.unknown()
+    fun findVisiblePositionsFor(entity: GameEntity<EntityType>): Iterable<Position> {
+        val centerPos = entity.position.to2DPosition()                  // 3
+        return entity.findAttribute(Vision::class).map { (radius) ->    // 4
+            EllipseFactory.buildEllipse(                                // 5
+                    fromPosition = centerPos,
+                    toPosition = centerPos.withRelativeX(radius).withRelativeY(radius)
+            )
+                    .positions
+                    .flatMap { ringPos ->
+                        val result = mutableListOf<Position>()
+                        val iter = LineFactory.buildLine(centerPos, ringPos).iterator() // 6
+                        do {
+                            val next = iter.next()
+                            result.add(next)
+                        } while (iter.hasNext() &&
+                                isVisionBlockedAt(Position3D.from2DPosition(next, entity.position.z)).not()
+                        )                                                               // 7
+                        result
+                    }
+        }.orElse(listOf())                                                          // 8
     }
 
     fun addWorldEntity(entity: Entity<EntityType, GameContext>) {
         engine.addEntity(entity)
     }
 
-    fun isVisionBlockedAt(pos: Position3D): Boolean {
-        return fetchBlockAt(pos).fold(whenEmpty = { false }, whenPresent = {
-            it.entities.any(GameEntity<EntityType>::blocksVision)
-        })
+    fun findPath(
+        looker: GameEntity<EntityType>,
+        target: GameEntity<EntityType>
+    ): List<Position> { // 1
+        var result = listOf<Position>()
+        looker.findAttribute(Vision::class).map { (radius) ->                   // 2
+            val level = looker.position.z
+            if (looker.position.isWithinRangeOf(target.position, radius)) {     // 3
+                val path = LineFactory.buildLine(looker.position.to2DPosition(), target.position.to2DPosition())  // 4
+                if (path.none { isVisionBlockedAt(it.toPosition3D(level)) }) {  // 5
+                    result = path.positions.toList().drop(1)
+                }
+            }
+        }
+        return result
     }
 
-    fun findVisiblePositionsFor(entity: GameEntity<EntityType>): Iterable<Position> {
-        val centerPos = entity.position.to2DPosition()
-        return entity.findAttribute(Vision::class).map { (radius) ->
-            EllipseFactory.buildEllipse(
-                fromPosition = centerPos,
-                toPosition = centerPos.withRelativeX(radius).withRelativeY(radius)
-            )
-                .positions
-                .flatMap { ringPos ->
-                    val result = mutableListOf<Position>()
-                    val iterator = LineFactory.buildLine(centerPos, ringPos).iterator()
-                    do {
-                        val next = iterator.next()
-                        result.add(next)
-                    } while (iterator.hasNext() &&
-                        isVisionBlockedAt(Position3D.from2DPosition(next, entity.position.z)).not()
-                    )
-                    result
-                }
-        }.orElse(listOf())
+    fun findTopItem(position: Position3D): Maybe<GameItem> =
+            fetchBlockAt(position).flatMap { block ->                                   // 5
+                Maybe.ofNullable(block.entities.filterType<Item>().firstOrNull())
+            }
+
+    private fun Position3D.isWithinRangeOf(other: Position3D, radius: Int): Boolean {
+        return this.isUnknown.not()
+                && other.isUnknown.not()
+                && this.z == other.z
+                && abs(x - other.x) + abs(y - other.y) <= radius
     }
+
+    private fun bothBlocksPresent(oldBlock: Maybe<GameBlock>, newBlock: Maybe<GameBlock>) =  // 7
+            oldBlock.isPresent && newBlock.isPresent
 }

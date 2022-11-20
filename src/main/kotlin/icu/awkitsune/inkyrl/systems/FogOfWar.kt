@@ -11,7 +11,6 @@ import org.hexworks.zircon.api.data.Position3D
 object FogOfWar : BaseBehavior<GameContext>() {
     override suspend fun update(entity: Entity<EntityType, GameContext>, context: GameContext): Boolean {
         val (world, _, _, player) = context
-
         world.findVisiblePositionsFor(player).forEach { pos ->
             world.fetchBlockAt(
                 Position3D.create(
@@ -23,7 +22,6 @@ object FogOfWar : BaseBehavior<GameContext>() {
                 block.top = GameTileRepository.EMPTY
             }
         }
-
         return true
     }
 }

@@ -8,19 +8,27 @@ import org.hexworks.zircon.api.data.Size3D
 import kotlin.random.Random
 
 class WorldBuilder(private val worldSize: Size3D) {
+
+    private var blocks: MutableMap<Position3D, GameBlock> = mutableMapOf()
     private val depth = worldSize.yLength
     private val width = worldSize.xLength
     private val height = worldSize.zLength
-    private var blocks: MutableMap<Position3D, GameBlock> = mutableMapOf()
-    
+
     fun makeCaves(): WorldBuilder {
         return randomizeTiles()
-            .smooth(6)
+            .smooth(8)
             .connectLevels()
     }
 
-    private fun connectLevels() = also {
-        (height - 1).downTo(1).forEach(::connectRegionDown)
+    fun build(visibleSize: Size3D): World = World(blocks, visibleSize, worldSize)
+
+    private fun randomizeTiles(): WorldBuilder {
+        forAllPositions { pos ->
+            blocks[pos] = if (Math.random() < 0.502) {
+                GameBlockFactory.floor()
+            } else GameBlockFactory.wall()
+        }
+        return this
     }
 
     private fun smooth(iterations: Int): WorldBuilder {
@@ -30,9 +38,8 @@ class WorldBuilder(private val worldSize: Size3D) {
                 val (x, y, z) = pos
                 var floors = 0
                 var rocks = 0
-                
                 pos.sameLevelNeighborsShuffled().plus(pos).forEach { neighbor ->
-                    blocks.whenPresent(neighbor) { block -> 
+                    blocks.whenPresent(neighbor) { block ->
                         if (block.isEmptyFloor) {
                             floors++
                         } else rocks++
@@ -43,19 +50,6 @@ class WorldBuilder(private val worldSize: Size3D) {
             }
             blocks = newBlocks
         }
-
-        return this
-    }
-
-    fun build(visibleSize: Size3D): World = World(blocks, visibleSize, worldSize)
-
-    private fun randomizeTiles(): WorldBuilder {
-        forAllPositions { pos ->
-            blocks[pos] = if (Math.random() < 0.5002) {
-                GameBlockFactory.floor()
-            } else GameBlockFactory.wall()
-        }
-        
         return this
     }
 
@@ -63,19 +57,17 @@ class WorldBuilder(private val worldSize: Size3D) {
         worldSize.fetchPositions().forEach(fn)
     }
 
-    private fun connectRegionDown(currentLevel: Int) {
-        val posToConnect = generateRandomFloorPositionsOn(currentLevel)
-            .first { pos ->
-                blocks[pos].isEmptyFloor() && blocks[pos.below()].isEmptyFloor()
-            }
-        blocks[posToConnect] = GameBlockFactory.stairsDown()
-        blocks[posToConnect.below()] = GameBlockFactory.stairsUp()
+    private fun MutableMap<Position3D, GameBlock>.whenPresent(pos: Position3D, fn: (GameBlock) -> Unit) {
+        this[pos]?.let(fn)
+    }
+
+    private fun connectLevels() = also {
+        (height - 1).downTo(1).forEach(::connectRegionDown)
     }
 
     private fun generateRandomFloorPositionsOn(level: Int) = sequence {
         while (true) {
             var pos = Position3D.unknown()
-
             while (pos.isUnknown) {
                 val candidate = Position3D.create(
                     x = Random.nextInt(width - 1),
@@ -89,15 +81,20 @@ class WorldBuilder(private val worldSize: Size3D) {
             yield(pos)
         }
     }
-}
 
-private fun Position3D.below(): Position3D = copy(z = z - 1)
+    private fun GameBlock?.isEmptyFloor(): Boolean {
+        return this?.isEmptyFloor ?: false
+    }
 
-private fun GameBlock?.isEmptyFloor(): Boolean {
-    return this?.isEmptyFloor ?: false
-}
+    private fun connectRegionDown(currentLevel: Int) {
+        val posToConnect = generateRandomFloorPositionsOn(currentLevel)
+            .first { pos ->
+                blocks[pos].isEmptyFloor() && blocks[pos.below()].isEmptyFloor()
+            }
+        blocks[posToConnect] = GameBlockFactory.stairsDown()
+        blocks[posToConnect.below()] = GameBlockFactory.stairsUp()
 
-private fun MutableMap<Position3D, GameBlock>.whenPresent(pos: Position3D, fn: (GameBlock) -> Unit) {
-    this[pos]?.let(fn)
+    }
 
+    private fun Position3D.below() = copy(z = z - 1)
 }

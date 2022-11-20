@@ -2,13 +2,13 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val zircon_version: String by project
+val amethyst_version: String by project
 val slf4j_version: String by project
 val junit_version: String by project
 val mockito_version: String by project
 val assertj_version: String by project
-val amethyst_version: String by project
-
 val compileKotlin: KotlinCompile by tasks
+
 compileKotlin.kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 
 plugins {
@@ -29,13 +29,12 @@ java {
 }
 
 dependencies {
-    implementation("org.hexworks.amethyst:amethyst.core-jvm:$amethyst_version")
-
     implementation("org.slf4j:slf4j-api:$slf4j_version")
     implementation("org.slf4j:slf4j-simple:$slf4j_version")
 
     implementation("org.hexworks.zircon:zircon.core-jvm:$zircon_version")
     implementation("org.hexworks.zircon:zircon.jvm.swing:$zircon_version")
+    implementation("org.hexworks.amethyst:amethyst.core-jvm:$amethyst_version")
 
     testImplementation("junit:junit:$junit_version")
     testImplementation("org.mockito:mockito-all:$mockito_version")
@@ -48,7 +47,7 @@ tasks {
         archiveVersion.set("")
         mergeServiceFiles()
         manifest {
-            attributes(mapOf("Main-Class" to "icu.awkitsune.MainKt"))
+            attributes(mapOf("Main-Class" to "com.example.cavesofzircon.MainKt"))
         }
     }
 }
@@ -61,8 +60,6 @@ tasks {
 
 val jar by tasks.getting(Jar::class) {
     manifest {
-        attributes["Main-Class"] = "icu.awkitsune.MainKt"
+        attributes["Main-Class"] = "com.example.MainKt"
     }
 }
-
-

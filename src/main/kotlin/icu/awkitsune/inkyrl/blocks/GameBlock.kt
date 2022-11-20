@@ -1,7 +1,6 @@
 package icu.awkitsune.inkyrl.blocks
 
 import icu.awkitsune.inkyrl.builders.GameTileRepository
-import icu.awkitsune.inkyrl.builders.GameTileRepository.EMPTY
 import icu.awkitsune.inkyrl.builders.GameTileRepository.FLOOR
 import icu.awkitsune.inkyrl.builders.GameTileRepository.PLAYER
 import icu.awkitsune.inkyrl.builders.GameTileRepository.WALL
@@ -17,20 +16,23 @@ import org.hexworks.zircon.api.data.base.BaseBlock
 
 class GameBlock(
     private var defaultTile: Tile = FLOOR,
-    private val currentEntities: MutableList<GameEntity<EntityType>> = mutableListOf()
-) : BaseBlock<Tile> (
-    emptyTile = EMPTY,
-    tiles = persistentMapOf(BlockTileType.CONTENT to defaultTile)
-){
-    init {
-        top = GameTileRepository.UNREVEALED
-        updateContent()
-    }
-    companion object {
-        fun createWith(entity: GameEntity<EntityType>) = GameBlock (
-            currentEntities = mutableListOf(entity)
-        )
-    }
+    private val currentEntities: MutableList<GameEntity<EntityType>> = mutableListOf(),
+) : BaseBlock<Tile>(
+        emptyTile = Tile.empty(),
+        tiles = persistentMapOf(BlockTileType.CONTENT to defaultTile)
+) {
+
+    val isFloor: Boolean
+        get() = defaultTile == FLOOR
+
+    val isWall: Boolean
+        get() = defaultTile == WALL
+
+    val isEmptyFloor: Boolean
+        get() = currentEntities.isEmpty()
+
+    val entities: Iterable<GameEntity<EntityType>>
+        get() = currentEntities.toList()
 
     val occupier: Maybe<GameEntity<EntityType>>
         get() = Maybe.ofNullable(currentEntities.firstOrNull { it.occupiesBlock })
@@ -38,17 +40,10 @@ class GameBlock(
     val isOccupied: Boolean
         get() = occupier.isPresent
 
-    val isFloor: Boolean
-        get() = content == FLOOR
-
-    val isWall: Boolean
-        get() = content == WALL
-
-    val isEmptyFloor: Boolean
-        get() = currentEntities.isEmpty()
-
-    val entities: Iterable<GameEntity<EntityType>>
-        get() = currentEntities.toList()
+    init {
+        top = GameTileRepository.UNREVEALED
+        updateContent()
+    }
 
     fun addEntity(entity: GameEntity<EntityType>) {
         currentEntities.add(entity)
@@ -69,4 +64,10 @@ class GameBlock(
         }
     }
 
+    companion object {
+
+        fun createWith(entity: GameEntity<EntityType>) = GameBlock(
+                currentEntities = mutableListOf(entity)
+        )
+    }
 }
