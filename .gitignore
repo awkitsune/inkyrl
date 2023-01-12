@@ -1,5 +1,4 @@
 # Project exclude paths
 /.gradle/
 /build/
-/build/classes/kotlin/main/
-/out/artifacts/inkyrl_jar/inkyrl.jar
+/out/

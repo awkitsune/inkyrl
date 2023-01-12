@@ -32,6 +32,7 @@
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.ben-manes.caffeine/caffeine/2.5.4/a162a31c2973550a8cd37cb9773a814ae3394fbb/caffeine-2.5.4.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.benasher44/uuid-jvm/0.2.2/234b6c56a11cbdd49c863aa102a21fbf41963c66/uuid-jvm-0.2.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.hexworks.cobalt/cobalt.core-jvm/2020.0.19-PREVIEW/d8288566155c99056190fce0fbd3f0e2eb96a4b9/cobalt.core-jvm-2020.0.19-PREVIEW.jar" path-in-jar="/" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources" />
     </root>
   </artifact>
 </component>
