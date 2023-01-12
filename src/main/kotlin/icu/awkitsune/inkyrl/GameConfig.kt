@@ -5,7 +5,6 @@ import org.hexworks.zircon.api.ColorThemes
 import org.hexworks.zircon.api.application.AppConfig
 import org.hexworks.zircon.api.data.Size3D
 
-
 object GameConfig {
 
     // game
@@ -34,6 +33,7 @@ object GameConfig {
     fun buildAppConfig() = AppConfig.newBuilder()
         .withDefaultTileset(TILESET)
         .withTitle("InkyRL")//TODO: Freaking icon
+        .withIcon("icon.png")
         .withSize(WINDOW_WIDTH, WINDOW_HEIGHT)
         .build()
 }
