@@ -2,16 +2,22 @@ package icu.awkitsune.inkyrl.builders
 
 import icu.awkitsune.inkyrl.builders.GameColors.ACCENT_COLOR
 import icu.awkitsune.inkyrl.builders.GameColors.FLOOR_BACKGROUND
+import icu.awkitsune.inkyrl.builders.GameColors.FLOOR_BACKGROUND_DARK
+import icu.awkitsune.inkyrl.builders.GameColors.FLOOR_BACKGROUND_LIGHT
 import icu.awkitsune.inkyrl.builders.GameColors.FLOOR_FOREGROUND
+import icu.awkitsune.inkyrl.builders.GameColors.UNREVEALED_COLOR
 import icu.awkitsune.inkyrl.builders.GameColors.WALL_BACKGROUND
 import icu.awkitsune.inkyrl.builders.GameColors.WALL_FOREGROUND
+import icu.awkitsune.inkyrl.builders.GameColors.WALL_FOREGROUND_DARK
+import icu.awkitsune.inkyrl.builders.GameColors.WALL_FOREGROUND_LIGHT
 import org.hexworks.zircon.api.color.ANSITileColor
+import org.hexworks.zircon.api.color.TileColor
 import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.graphics.Symbols
+import kotlin.random.Random
 
 object GameTileRepository {
-
     val EMPTY: CharacterTile = Tile.empty()
 
     val FLOOR: CharacterTile = Tile.newBuilder()
@@ -22,6 +28,7 @@ object GameTileRepository {
 
     val WALL: CharacterTile = Tile.newBuilder()
             .withCharacter('█')
+            //.withForegroundColor(WALL_FOREGROUND)
             .withForegroundColor(WALL_FOREGROUND)
             .withBackgroundColor(WALL_BACKGROUND)
             .buildCharacterTile()
@@ -40,7 +47,7 @@ object GameTileRepository {
 
     val UNREVEALED = Tile.newBuilder()
             .withCharacter(' ')
-            .withBackgroundColor(GameColors.UNREVEALED_COLOR)
+            .withBackgroundColor(UNREVEALED_COLOR)
             .buildCharacterTile()
 
     val PLAYER = Tile.newBuilder()

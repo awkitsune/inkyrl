@@ -1,8 +1,12 @@
 package icu.awkitsune.inkyrl.blocks
 
+import icu.awkitsune.inkyrl.builders.GameColors.UNREVEALED_COLOR
+import icu.awkitsune.inkyrl.builders.GameColors.UNREVEALED_COLOR_DARK
+import icu.awkitsune.inkyrl.builders.GameColors.UNREVEALED_COLOR_LIGHT
 import icu.awkitsune.inkyrl.builders.GameTileRepository
 import icu.awkitsune.inkyrl.builders.GameTileRepository.FLOOR
 import icu.awkitsune.inkyrl.builders.GameTileRepository.PLAYER
+import icu.awkitsune.inkyrl.builders.GameTileRepository.UNREVEALED
 import icu.awkitsune.inkyrl.builders.GameTileRepository.WALL
 import icu.awkitsune.inkyrl.extensions.GameEntity
 import icu.awkitsune.inkyrl.extensions.occupiesBlock
@@ -13,6 +17,7 @@ import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.zircon.api.data.BlockTileType
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.base.BaseBlock
+import kotlin.random.Random
 
 class GameBlock(
     private var defaultTile: Tile = FLOOR,
@@ -41,7 +46,7 @@ class GameBlock(
         get() = occupier.isPresent
 
     init {
-        top = GameTileRepository.UNREVEALED
+        top = UNREVEALED.withBackgroundColor(if (Random.nextBoolean()) UNREVEALED_COLOR else if (Random.nextBoolean()) UNREVEALED_COLOR_LIGHT else UNREVEALED_COLOR_DARK)
         updateContent()
     }
 

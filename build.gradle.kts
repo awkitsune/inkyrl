@@ -39,6 +39,7 @@ dependencies {
     testImplementation("junit:junit:$junit_version")
     testImplementation("org.mockito:mockito-all:$mockito_version")
     testImplementation("org.assertj:assertj-core:$assertj_version")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks {
@@ -62,4 +63,11 @@ val jar by tasks.getting(Jar::class) {
     manifest {
         attributes["Main-Class"] = "com.example.MainKt"
     }
+}
+compileKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "1.8"
 }

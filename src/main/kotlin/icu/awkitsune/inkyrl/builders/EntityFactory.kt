@@ -118,7 +118,7 @@ object EntityFactory {
         attributes(
             EntityPosition(),
             BlockOccupier,
-            EntityTile(GameTileRepository.WALL),
+            EntityTile(GameTileRepository.WALL.withForegroundColor(if (Random.nextBoolean()) GameColors.WALL_FOREGROUND else if (Random.nextBoolean()) GameColors.WALL_FOREGROUND_LIGHT else GameColors.WALL_FOREGROUND_DARK)),
             VisionBlocker
         )
         facets(Diggable)

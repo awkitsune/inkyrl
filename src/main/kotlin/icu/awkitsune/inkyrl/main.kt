@@ -2,8 +2,6 @@ package icu.awkitsune.inkyrl
 
 import icu.awkitsune.inkyrl.view.StartView
 import org.hexworks.zircon.api.SwingApplications
-import org.hexworks.zircon.api.application.Application
-import javax.swing.JFrame
 
 class Main {
     companion object {
