@@ -16,7 +16,7 @@ class WorldBuilder(private val worldSize: Size3D) {
 
     fun makeCaves(): WorldBuilder {
         return randomizeTiles()
-            .smooth(8)
+            .smooth(3)
             .connectLevels()
     }
 
